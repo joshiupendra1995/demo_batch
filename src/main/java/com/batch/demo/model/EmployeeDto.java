@@ -29,7 +29,7 @@ public class EmployeeDto {
 
 	private String motherName;
 
-	private String weight;
+	private Integer weight;
 
 	private String salary;
 
@@ -41,7 +41,7 @@ public class EmployeeDto {
 
 	private String state;
 
-	private String zipCode;
+	private Integer zipCode;
 
 	private String region;
 

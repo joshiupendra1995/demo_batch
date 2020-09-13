@@ -6,6 +6,7 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -19,10 +20,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import com.batch.demo.entity.Employee;
 import com.batch.demo.model.EmployeeDto;
 import com.batch.demo.step.Listener;
+import com.batch.demo.step.SkipPolicyJob;
 
 /**
  * @author Upendra
@@ -46,8 +50,8 @@ public class BatchConfig {
 			ItemReader<EmployeeDto> itemReader, ItemProcessor<EmployeeDto, Employee> itemProcessor,
 			ItemWriter<Employee> itemWriter) {
 
-		Step step = stepBuilderFactory.get("load-job").<EmployeeDto, Employee>chunk(1000).reader(itemReader)
-				.processor(itemProcessor).writer(itemWriter).build();
+		Step step = stepBuilderFactory.get("load-job").<EmployeeDto, Employee>chunk(10).reader(itemReader)
+				.processor(itemProcessor).writer(itemWriter).faultTolerant().skipPolicy(skipPolicy()).taskExecutor(taskExecutor()).build();
 
 		return jobBuilderFactory.get("load-emp-job").incrementer(new RunIdIncrementer()).listener(new Listener())
 				.start(step).build();
@@ -86,6 +90,16 @@ public class BatchConfig {
 		defaultLineMapper.setFieldSetMapper(fieldSetMapper);
 
 		return defaultLineMapper;
+	}
+
+	@Bean
+	public TaskExecutor taskExecutor() {
+		return new SyncTaskExecutor();
+	}
+
+	@Bean
+	public SkipPolicy skipPolicy() {
+		return new SkipPolicyJob();
 	}
 
 }

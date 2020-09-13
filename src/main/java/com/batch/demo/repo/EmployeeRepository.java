@@ -10,6 +10,6 @@ import com.batch.demo.entity.Employee;
  *
  */
 @Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
 }
