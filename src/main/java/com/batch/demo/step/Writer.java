@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.batch.demo.entity.Employee;
-import com.batch.demo.repo.EmployeeRepository;
+import com.batch.demo.service.EmployeeService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,13 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 public class Writer implements ItemWriter<Employee> {
 
 	@Autowired
-	private EmployeeRepository employeeRepo;
+	private EmployeeService employeeService;
 
 	@Override
 	public void write(List<? extends Employee> employee) throws Exception {
 		
-		log.info("Data Saved for Employee: " + employeeRepo);
-		employeeRepo.saveAll(employee);
+		log.info("Data Saved for Employee: " + employeeService);
+		employeeService.saveEmployees(employee);
 	}
 
 }
